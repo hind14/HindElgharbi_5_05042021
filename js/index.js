@@ -1,36 +1,40 @@
+//Récupération de l'API avec des promesses  
+
 fetch('http://localhost:3000/api/furniture') 
-.then(function (response) { 
-return response.json() 
+.then(function (response) { //promesse avec une fonction qui retourne l'objet response au format json
+return response.json()
 })
-.then(function (data) {
+.then(function (data) { //Seconde promesse qui récupère les données de l'adresse récupérée
     console.log(data)
-    data.forEach (function(furniture) { 
-        createAndDisplayFurniture(furniture)
-    })     
+    data.forEach (function(furniture) { //Utilisation d'une boucle ForEach qui prend les données et les assimile avec une fonction nommée createAndDisplayFurniture
+        createAndDisplayFurniture(furniture) 
+    })    
 })
-.catch(function (error) {
-    return error 
+.catch(function (error) { //Dernière promesse si l'execution échoue, retourne 'error'
+    alert(error)
 })
 
+ //Création d'une fonction qui crée et affiche la liste d'article/meuble
 
-const $furnitureList = document.querySelector('.list-items'); 
+function createAndDisplayFurniture (furniture) {
+    const $furnitureList = document.querySelector('.list-items') 
+    const $li = document.createElement('li') 
+    $furnitureList.appendChild($li)
 
-function createAndDisplayFurniture (furniture) { 
-    const $li = document.createElement('li'); 
-    $furnitureList.appendChild($li); 
-    const $nameParagraph = document.createElement('p');
-    $nameParagraph.innerText = 'Produit : ' + furniture.name; 
-    const $priceParagraph = document.createElement('p');
-    $priceParagraph.innerText = 'Prix : ' + furniture.price;
-    const $descriptionParagraph = document.createElement('p');
-    $descriptionParagraph.innerText = 'Description : ' + furniture.description;
-    const $varnishParagraph = document.createElement('p');
-    $varnishParagraph.innerText = 'Vernissage : ' + furniture.varnish;
-    const $image = document.createElement('img');
+    //lien qui redirige vers une page 'produit' grâce à l'id
+    
+    const $linkToFurniture = document.createElement('a')
+    $linkToFurniture.setAttribute('href', 'html/produit.html?id=' + furniture._id)
+    $li.appendChild($linkToFurniture)
+    const $image = document.createElement('img') 
     $image.src = furniture.imageUrl
-    $li.appendChild($image) 
-    $li.appendChild($nameParagraph); 
-    $li.appendChild($priceParagraph);
-    $li.appendChild($descriptionParagraph);
-    $li.appendChild($varnishParagraph);
+    $linkToFurniture.appendChild($image)
+    const $nameParagraph = document.createElement('p')
+    $nameParagraph.innerText = 'Produit : ' + furniture.name
+    $linkToFurniture.appendChild($nameParagraph) 
+    const $priceParagraph = document.createElement('p')
+    $priceParagraph.innerText = 'Prix : ' + furniture.price
+    const $descriptionParagraph = document.createElement('p')
+    $descriptionParagraph.innerText = 'Description : ' + furniture.description
+    $linkToFurniture.appendChild($priceParagraph)
 }
