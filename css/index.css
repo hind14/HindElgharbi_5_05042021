@@ -32,12 +32,12 @@ body {
     cursor: pointer;
 }
 
-.shopping-icon {
+.shop-cart-icon {
     font-size: 30px;
-    
+    color: #000; 
 }
 
-.cart-items {
+.cart {
     position: absolute;
     top: -8px;
     right: -3px;
