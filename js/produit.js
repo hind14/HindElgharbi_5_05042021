@@ -1,63 +1,62 @@
-//Chargement de l'URL mofifié en prenant l'élément 'id' du tableau
+//Chargement de l'URL mofifiée en prenant l'élément 'id' des données du service web (backend)
 
 const urlParam = document.location.search;
 const searchParam = new URLSearchParams(urlParam);
 const id = searchParam.get('id');
 
-//Récuperation grâce à l'id vers la page produit avec une seul article
+//Récupération des données du service web grâce à l'id vers la page produit avec un seul article
 
 fetch('http://localhost:3000/api/furniture/' + id)
-    .then(function (response) {
-        return response.json()
-    })
-    .then(function (data) {
-        displayOneFurniture(data)
-    })
-    .catch(function (error) {
-        alert(error)
-    });
+.then(function (response) {
+    return response.json()
+})
+.then(function (data) {
+    createAndDisplayFurniture(data)
+})
+.catch(function (error) {
+    alert(error)
+});
 
-//Création d'une focntion qui récupère le contenu d'un article avec les éléments issues du data de l'API
+//Récupération d'un élement en HTML puis création d'une div à l'intérieur de celui-ci
 
-function displayOneFurniture(oneFurniture) {
-    const $selectFurnitureInDiv = document.querySelector('.item-box');
-    const $furniture = document.createElement('div');
-    $selectFurnitureInDiv.appendChild($furniture);
+const $selectFurnitureInDiv = document.querySelector('.item-box');
+const $furniture = document.createElement('div');
+$selectFurnitureInDiv.appendChild($furniture);
+$furniture.classList.add('furniture');
+
+//Création d'une fonction qui récupère le contenu d'un article et qui le place dans des paragraphes
+
+function createAndDisplayFurniture(furniture) {
     const $image = document.createElement('img');
-    $image.src = oneFurniture.imageUrl;
+    $image.src = furniture.imageUrl;
     $furniture.appendChild($image);
     const $nameParagraph = document.createElement('p');
-    $nameParagraph.innerText = 'Produit : ' + oneFurniture.name;
+    $nameParagraph.innerText = 'Produit : ' + furniture.name;
     $furniture.appendChild($nameParagraph);
     const $priceParagraph = document.createElement('p');
-    $priceParagraph.innerText = oneFurniture.price + ' €';
+    $priceParagraph.innerText = furniture.price + ' €';
     $furniture.appendChild($priceParagraph);
     const $descriptionParagraph = document.createElement('p');
-    $descriptionParagraph.innerText = 'Description : ' + oneFurniture.description;
+    $descriptionParagraph.innerText = 'Description : ' + furniture.description;
     $furniture.appendChild($descriptionParagraph);
 
-    //Création d'un selecteur prenant pour options les données affichées dans le tableau [varnish] issue de l'API
+    createSelector(furniture);
+    createAndDisplayButton();
+};
 
+/* Création d'un selecteur prenant pour options les données affichées dans le tableau 
+[varnish] issue de l'API, et d'un selecteur de quantité */
+
+function createSelector(furniture) {
     const $varnishParagraph = document.createElement('p');
     $varnishParagraph.innerText = 'Vernissage : ';
     $furniture.appendChild($varnishParagraph);
     const $varnishSelect = document.createElement('select');
     $varnishParagraph.appendChild($varnishSelect);
 
-    oneFurniture.varnish.forEach(function (elt) {
-        let option = new Option(elt, elt);
-        $varnishSelect.appendChild(option);
-    });
-
-    //Crétion d'un selecteur de quantité
-
-    const $quantitySelect = document.createElement('select');
-    $varnishParagraph.appendChild($quantitySelect);
-
-    
-    ['un','deux','trois'].forEach(function (numberSelected, index) {
-        let option = new Option(numberSelected, index + 1);
-        $quantitySelect.appendChild(option);
+    furniture.varnish.forEach(function (varnishSelected) {
+        let $option = new Option(varnishSelected);
+        $varnishSelect.appendChild($option);
     });
 
     //On écoute l'événement le select qui prennent les valeurs du array avec l'objet varnish
@@ -65,63 +64,73 @@ function displayOneFurniture(oneFurniture) {
     $varnishSelect.addEventListener('change', function () {
     });
 
-    //Création d'un bouton pour ajouter au panier 
+    //Création du selecteur de quantité
 
+    const $quantitySelect = document.createElement('select');
+    $varnishParagraph.appendChild($quantitySelect);
+
+    ['un','deux','trois','quatre', 'cinq'].forEach(function (numberSelected, index) {
+        let $option = new Option(numberSelected, index +1);
+        $quantitySelect.appendChild($option);
+    });
+};
+
+//Création du nombre d'article dans le panier, initialisé à 0
+
+const $cartBox = document.querySelector('.cart-box');
+const $cart = document.createElement('div');
+$cart.classList.add('cart');
+$cartBox.appendChild($cart);
+$cart.innerText = '0';
+const $linkToShopCart = document.createElement('a');
+$linkToShopCart.setAttribute('href', 'panier.html');
+const $shopCartIcon = document.querySelector('.shop-cart-icon');
+$cartBox.appendChild($linkToShopCart);
+$linkToShopCart.appendChild($shopCartIcon);
+
+//Création d'un bouton pour ajouter au panier 
+
+function createAndDisplayButton() {
     const $button = document.createElement('input');
     $button.setAttribute('type', 'button');
     $button.setAttribute('value', 'Ajouter au panier');
     $button.classList.add('btn');
     $furniture.appendChild($button);
-    const selectClassOfButton = document.getElementsByClassName('btn');
+    const classOfButton = document.getElementsByClassName('btn');
 
+    //Ajouter une boucle pour ajouter dans le localStorage
 
-    //Ajouter une boucle 
-
-    for (let i = 0; i < selectClassOfButton.length; i++) {
-        selectClassOfButton[i].addEventListener('click', function () {
-            addingItem()
+    for (let i = 0; i < classOfButton.length; i++) {
+        classOfButton[i].addEventListener('click', function () {
+            addingItemIntoCart();
         });
     };
+};
 
-    //Création du nombre d'article ajouté dans le panier + page avec le contenu du panier
+//Ajout d'article dans le stockage local et récupération des éléments de l'article dans le panier
 
-    const $cart = document.createElement('div');
-    $cart.classList.add('cart');
-    const $cartBox = document.querySelector('.cart-box');
-    $cartBox.appendChild($cart);
-    $cart.innerText = '0';
-    const $linkToShopCart = document.createElement('a');
-    $linkToShopCart.setAttribute('href', 'panier.html');
-    $shopCartIcon = document.querySelector('.shop-cart-icon');
-    $cartBox.appendChild($linkToShopCart);
-    $linkToShopCart.appendChild($shopCartIcon);
+function addingItemIntoCart() {
+    let numberOfItems = localStorage.getItem('addingItems');
 
-    //Ajout d'article dans le stockage local et augmentation du nombbre dans le panier 
+    numberOfItems = parseInt(numberOfItems);
 
-    function addingItem() {
-        let numberOfItems = localStorage.getItem('addingItems');
-        numberOfItems = parseInt(numberOfItems);
+    if (numberOfItems) {
+        localStorage.setItem('addingItems', numberOfItems + 1);
+        $cart.textContent = numberOfItems + 1;
+    } else {
+        localStorage.setItem('addingItems', JSON.stringify());
+        $cart.tabIndex = 1;   
+    }
+};
 
-        if (numberOfItems) {
-            localStorage.setItem('addingItems', numberOfItems + 1);
-            $cart.textContent = numberOfItems + 1;
-        } else {
-            localStorage.setItem('addingItems', JSON.stringify([]));
-            $cart.tabIndex = 1;
-        }
-    };
+//Fonction qui permet l'actualisation de la page sans la suppression du nombre d'article dans le panier
 
-    //fonction qui permet l'actualisation de la page sans la suppression du nombre d'article dans le panier
+function onLoadCartNumbers() {
+    let numberOfItems = localStorage.getItem('addingItems');
 
-    function onLoadCartNumber() {
-        let numberOfItems = localStorage.getItem('addingItems');
+    if (numberOfItems) {
+        $cart.textContent = numberOfItems;
+    }
+};
 
-        if (numberOfItems) {
-            $cart.textContent = numberOfItems;
-        }
-    };
-
-    //Appeller la fonction pour qu'elle fonctionne
-
-    onLoadCartNumber();
-}
+onLoadCartNumbers();
