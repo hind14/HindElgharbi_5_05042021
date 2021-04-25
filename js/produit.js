@@ -7,24 +7,24 @@ const id = searchParam.get('id');
 //Récupération des données du service web grâce à l'id vers la page produit avec un seul article
 
 fetch('http://localhost:3000/api/furniture/' + id)
-.then(function (response) {
-    return response.json()
-})
-.then(function (data) {
-    createAndDisplayFurniture(data)
-})
-.catch(function (error) {
-    alert(error)
-});
+    .then(function (response) {
+        return response.json()
+    })
+    .then(function (data) {
+        createAndDisplayFurniture(data)
+    })
+    .catch(function (error) {
+        alert(error)
+    });
 
 //Récupération d'un élement en HTML puis création d'une div à l'intérieur de celui-ci
 
-const $selectFurnitureInDiv = document.querySelector('.item-box');
+const $selectItemBoxInDiv = document.querySelector('.item-box');
 const $furniture = document.createElement('div');
-$selectFurnitureInDiv.appendChild($furniture);
+$selectItemBoxInDiv.appendChild($furniture);
 $furniture.classList.add('furniture');
 
-//Création d'une fonction qui récupère le contenu d'un article et qui le place dans des paragraphes
+//Création d'une fonction qui récupère le contenu d'un article et le place dans des paragraphes
 
 function createAndDisplayFurniture(furniture) {
     const $image = document.createElement('img');
@@ -40,8 +40,10 @@ function createAndDisplayFurniture(furniture) {
     $descriptionParagraph.innerText = 'Description : ' + furniture.description;
     $furniture.appendChild($descriptionParagraph);
 
-    createSelector(furniture);
-    createAndDisplayButton();
+    //Appeller les focntions qui actionnent le bouton qui lorsqu'il est cliqué enclanche les selecteurs de quatité et de vernissage.
+
+    const selectors = createSelector(furniture);
+    createAndDisplayButton(furniture, selectors);
 };
 
 /* Création d'un selecteur prenant pour options les données affichées dans le tableau 
@@ -49,7 +51,7 @@ function createAndDisplayFurniture(furniture) {
 
 function createSelector(furniture) {
     const $varnishParagraph = document.createElement('p');
-    $varnishParagraph.innerText = 'Vernissage : ';
+    $varnishParagraph.innerText = 'Vernis : ';
     $furniture.appendChild($varnishParagraph);
     const $varnishSelect = document.createElement('select');
     $varnishParagraph.appendChild($varnishSelect);
@@ -59,7 +61,7 @@ function createSelector(furniture) {
         $varnishSelect.appendChild($option);
     });
 
-    //On écoute l'événement le select qui prennent les valeurs du array avec l'objet varnish
+    //On écoute l'événement du select qui prenne les valeurs du tableau varnish.
 
     $varnishSelect.addEventListener('change', function () {
     });
@@ -69,19 +71,23 @@ function createSelector(furniture) {
     const $quantitySelect = document.createElement('select');
     $varnishParagraph.appendChild($quantitySelect);
 
-    ['un','deux','trois','quatre', 'cinq'].forEach(function (numberSelected, index) {
-        let $option = new Option(numberSelected, index +1);
+    ['un', 'deux', 'trois', 'quatre', 'cinq'].forEach(function (numberSelected, index) {
+        let $option = new Option(numberSelected, index + 1);
         $quantitySelect.appendChild($option);
     });
+
+    //La fonction retourne les selecteurs de quantité et de vernis
+
+    return [$quantitySelect, $varnishSelect];
 };
 
-//Création du nombre d'article dans le panier, initialisé à 0
+//Création du panier + lien vers la page panier
 
 const $cartBox = document.querySelector('.cart-box');
 const $cart = document.createElement('div');
 $cart.classList.add('cart');
 $cartBox.appendChild($cart);
-$cart.innerText = '0';
+
 const $linkToShopCart = document.createElement('a');
 $linkToShopCart.setAttribute('href', 'panier.html');
 const $shopCartIcon = document.querySelector('.shop-cart-icon');
@@ -90,47 +96,54 @@ $linkToShopCart.appendChild($shopCartIcon);
 
 //Création d'un bouton pour ajouter au panier 
 
-function createAndDisplayButton() {
+function createAndDisplayButton(furniture, selectors) {
     const $button = document.createElement('input');
     $button.setAttribute('type', 'button');
     $button.setAttribute('value', 'Ajouter au panier');
     $button.classList.add('btn');
     $furniture.appendChild($button);
-    const classOfButton = document.getElementsByClassName('btn');
 
-    //Ajouter une boucle pour ajouter dans le localStorage
+    //En appuyant sur le bouton, la fonction liée au localStroage est appellée et ajoute les articles dans ce dernier (nb + varnish)
 
-    for (let i = 0; i < classOfButton.length; i++) {
-        classOfButton[i].addEventListener('click', function () {
-            addingItemIntoCart();
-        });
-    };
+    $button.addEventListener('click', function () {
+        addingItemIntoCart(furniture, selectors);
+    });
 };
 
 //Ajout d'article dans le stockage local et récupération des éléments de l'article dans le panier
 
-function addingItemIntoCart() {
-    let numberOfItems = localStorage.getItem('addingItems');
+function addingItemIntoCart(furniture, selectors) {
+    let basket = localStorage.getItem('Orinoco');
 
-    numberOfItems = parseInt(numberOfItems);
-
-    if (numberOfItems) {
-        localStorage.setItem('addingItems', numberOfItems + 1);
-        $cart.textContent = numberOfItems + 1;
+    if (basket) {
+        basket = JSON.parse(basket);
     } else {
-        localStorage.setItem('addingItems', JSON.stringify());
-        $cart.tabIndex = 1;   
+        basket = [];
     }
+
+    const furniture_ = {
+        _id: furniture._id,
+        name: furniture.name,
+        price: furniture.price,
+        quantity: parseInt(selectors[0].value),
+        varnish: selectors[1].value
+    }
+
+    basket.push(furniture_);
+
+    localStorage.setItem('Orinoco', JSON.stringify(basket));
 };
 
-//Fonction qui permet l'actualisation de la page sans la suppression du nombre d'article dans le panier
+const basket = JSON.parse(localStorage.getItem('Orinoco'));
+let nbInBasket;
 
-function onLoadCartNumbers() {
-    let numberOfItems = localStorage.getItem('addingItems');
+//Actualisation du nombre d'article dans le panier
 
-    if (numberOfItems) {
-        $cart.textContent = numberOfItems;
-    }
-};
+if (basket) {
+    nbInBasket = basket.length;
+}
+else {
+    nbInBasket = 0;
+}
 
-onLoadCartNumbers();
+$cart.innerText = nbInBasket;
