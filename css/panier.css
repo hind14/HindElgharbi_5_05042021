@@ -26,3 +26,23 @@ body {
     width: 200px;
 }
 
+li {
+    color: blueviolet;
+}
+
+.empty-basket {
+    text-align: center;
+}
+
+h2,.empty-basket {
+    color : red;
+}
+
+.link-to-product {
+    color : orange;
+}
+
+.total {
+    color : green;
+}
+

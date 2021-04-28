@@ -121,13 +121,17 @@ function addingItemIntoCart(furniture, selectors) {
         basket = [];
     }
 
+    //Stockage d'une variable avec les objets qui vont  s'envoyer au panier
+
     const furniture_ = {
         _id: furniture._id,
         name: furniture.name,
-        price: furniture.price,
+        price: parseInt(furniture.price)/100,
         quantity: parseInt(selectors[0].value),
         varnish: selectors[1].value
     }
+
+    //Les envoyer dans le tableau basket
 
     basket.push(furniture_);
 
@@ -141,9 +145,10 @@ let nbInBasket;
 
 if (basket) {
     nbInBasket = basket.length;
+    
 }
 else {
     nbInBasket = 0;
-}
+};
 
 $cart.innerText = nbInBasket;
