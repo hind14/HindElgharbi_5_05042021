@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../css/panier.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css"
         integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous">
-    <title> Panier de commande - Orinoco</title>
+    <title>Orinoco - Panier de commande</title>
 </head>
 
 <body>
@@ -21,7 +21,25 @@
     </header>
     <!-- end of navbar -->
     <section class="section-1">
+        <h1>Votre panier</h1>
         <ul class="list-of-articles"></ul>
+        <h2>
+            Veuillez saisir vos coordonées
+        </h2>
+        <form id="form">
+            <label for="first-name">First name:</label>
+            <input type="text" id="first-name" name="first-name" > </br>
+            <label for="last-name">Last name:</label>
+            <input type="text" id="last-name"   name="last-name"> </br>
+            <label for="adress">Adresse :</label>
+            <input type="text" id="adress"  name="adress"> </br>
+            <label for="city">Ville : </label>
+            <input type="text" id="city"  name="city"> </br>
+            <label for="email">Email :</label>
+            <input id="email" type="email" name="email"> </br>
+            <input type="submit" value="Validez votre commande">
+        </form>
+        <div id="result"></div>
     </section>
     <script src="../js/panier.js"></script>
 </body>

@@ -34,7 +34,7 @@ function createAndDisplayFurniture(furniture) {
     $nameParagraph.innerText = 'Produit : ' + furniture.name;
     $furniture.appendChild($nameParagraph);
     const $priceParagraph = document.createElement('p');
-    $priceParagraph.innerText = furniture.price + ' €';
+    $priceParagraph.innerText = (furniture.price)/100 + ',00 €';
     $furniture.appendChild($priceParagraph);
     const $descriptionParagraph = document.createElement('p');
     $descriptionParagraph.innerText = 'Description : ' + furniture.description;
@@ -103,7 +103,7 @@ function createAndDisplayButton(furniture, selectors) {
     $button.classList.add('btn');
     $furniture.appendChild($button);
 
-    //En appuyant sur le bouton, la fonction liée au localStroage est appellée et ajoute les articles dans ce dernier (nb + varnish)
+    //En appuyant sur le bouton, la fonction liée au localStorage est appellée et ajoute les articles dans ce dernier (nb + varnish)
 
     $button.addEventListener('click', function () {
         addingItemIntoCart(furniture, selectors);

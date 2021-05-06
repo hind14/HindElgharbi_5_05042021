@@ -39,25 +39,37 @@ function createAndDisplayFurniture (furniture) {
     $nameParagraph.innerText = 'Produit : ' + furniture.name;
     $linkToFurniture.appendChild($nameParagraph); 
     const $priceParagraph = document.createElement('p');
-    $priceParagraph.innerText = furniture.price + ' €' ;
+    $priceParagraph.innerText = (furniture.price)/100 + ',00 €' ;
     const $descriptionParagraph = document.createElement('p');
     $descriptionParagraph.innerText = 'Description : ' + furniture.description;
     $linkToFurniture.appendChild($priceParagraph);
-
-    goToCart()
 };
 
 //Création du nombre d'article ajouté dans le panier + page avec le contenu du panier
-   
-function goToCart () {
-    const $cart = document.createElement('div');
-    $cart.classList.add('cart');
-    const $cartBox = document.querySelector('.cart-box');
-    $cartBox.appendChild($cart);
-    $cart.innerText = '0';
-    const $linkToShopCart = document.createElement('a');
-    $linkToShopCart.setAttribute('href', 'html/panier.html');
-    $shopCartIcon = document.querySelector('.shop-cart-icon');
-    $cartBox.appendChild($linkToShopCart);
-    $linkToShopCart.appendChild($shopCartIcon);
+
+const $cart = document.createElement('div');
+$cart.classList.add('cart');
+const $cartBox = document.querySelector('.cart-box');
+$cartBox.appendChild($cart);
+
+const $linkToShopCart = document.createElement('a');
+$linkToShopCart.setAttribute('href', 'html/panier.html');
+$shopCartIcon = document.querySelector('.shop-cart-icon');
+$cartBox.appendChild($linkToShopCart);
+$linkToShopCart.appendChild($shopCartIcon);
+
+//Actualisation du nombre d'article dans le panier
+
+const basket = JSON.parse(localStorage.getItem('Orinoco'));
+let nbInBasket;
+
+//Prendre la longeur d'article qui sont dans le local storage pour avoir un chiffre
+
+if (basket) {
+    nbInBasket = basket.length;   
+}
+else {
+    nbInBasket = 0;
 };
+
+$cart.innerText = nbInBasket;
