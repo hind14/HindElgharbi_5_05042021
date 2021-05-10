@@ -156,7 +156,7 @@ function send(e) {
             }
         })
         .then(function (result) { 
-            document.location.href = `commande.html?totalprice=${total}&orderId=${result.orderId}`
+            document.location.href = `commande.html?totalPrice=${total}&orderId=${result.orderId}`
         })
         .catch(function (error) {
             alert(error)
