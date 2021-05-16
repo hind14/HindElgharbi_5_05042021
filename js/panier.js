@@ -1,8 +1,6 @@
 const $section = document.querySelector('.section-1');
 const $boxListOfArticles = document.querySelector('.list-of-articles');
 
-let total = 0;
-
 // Lien vers produits / continuer les achats
 
 const $linkToProduct = document.createElement('a');
@@ -11,31 +9,71 @@ $linkToProduct.classList.add('link-to-product');
 $linkToProduct.innerText = 'Continuer mes achats';
 $boxListOfArticles.appendChild($linkToProduct);
 
-// Stocker une variable qui récupère le tableau issu de la page produit (du local storage)
+// Déclaration d'une variable du prix total qui vaut zéro
 
-let fromStorage = localStorage.getItem('Orinoco');
+let total = 0;
 
-// Condition d'affichage du panier si vide ou rempli
+// Déclaration d'une variable produit vide
 
-if (!fromStorage) {
+let products;
 
-    // Panier vide
+// Récupération du formulaire html
 
-    const $emptyBasket = document.createElement('div');
-    $emptyBasket.classList.add('empty-basket')
-    $emptyBasket.innerHTML = '<h2> Votre panier ne contient aucun article </h2>';
-    $section.appendChild($emptyBasket);
+let $form = document.querySelector('#form');
 
-} else {
+const formFields = {
+    $firstName: document.querySelector('#first-name'),
+    $lastName: document.querySelector('#last-name'),
+    $address: document.querySelector('#adress'),
+    $city: document.querySelector('#city'),
+    $email: document.querySelector('#email')
+};
 
-    // Panier rempli, on transforme les chaînes de caractère en objets
+// Variable contenant un objet qui contient: un objet contenant des coordonnées "contact"  et un tableau vide "products"
 
-    const convertIntoObject = JSON.parse(fromStorage);
+const order = {
+    contact: {
+        firstName: '',
+        lastName: '',
+        address: '',
+        city: '',
+        email: ''
+    },
+    products: []
+};
 
-    // Appel de la fonction qui affiche le panier avec comme paramètre les objets issues du localstorage
 
-    displayBasket(convertIntoObject);
-}
+//Fonction qui récupère les produits du localStorage
+
+function getFromStorage() {
+    // Stocker une variable qui récupère le tableau issu de la page produit (du local storage)
+
+    let fromStorage = localStorage.getItem('Orinoco');
+
+    // Condition d'affichage du panier si vide ou rempli
+
+    if (!fromStorage) {
+
+        // Panier vide
+
+        const $emptyBasket = document.createElement('div');
+        $emptyBasket.classList.add('empty-basket')
+        $emptyBasket.innerHTML = '<h2> Votre panier ne contient aucun article </h2>';
+        $section.appendChild($emptyBasket);
+
+    } else {
+
+        // Panier rempli, on transforme les chaînes de caractère en objet
+
+         products = JSON.parse(fromStorage);
+
+        // Appel de la fonction qui affiche le panier avec comme paramètre les objets issues du localstorage
+
+        displayBasket(products);
+    };
+};
+
+getFromStorage();
 
 // Fonction qui permet l'affichage des données issues du localStorage
 
@@ -58,7 +96,7 @@ function displayBasket(basket) {
         $list.innerHTML += `<p> Quantité : ${furniture.quantity}  </p>`;
         $list.innerHTML += `<p> Sous-total : ${subTotal},00 €</p>`;
 
-        // Total, addition des sous-totaux
+        // Total: addition des sous-totaux
 
         total += subTotal;
     });
@@ -69,36 +107,12 @@ function displayBasket(basket) {
     $total.innerHTML = `<p> Montant total : ${total},00  € </p>`;
 };
 
-
 //Formulaire + envoie des données vers API
-
-// Variable contenant un objet qui contient: un objet contenant des coordonnées "contact"  et un tableau vide "products"
-
-const order = {
-    contact: {
-        firstName: '',
-        lastName: '',
-        address: '',
-        city: '',
-        email: ''
-    },
-    products: []
-};
-
-// Condition de récupération des objets du LS, stockage des objets dans la variable "products"
-
-let products;
-
-if (!fromStorage) {
-    fromStorage = 0;
-    alert("Il n'y a pas d'article dans votre panier ! Impossible de passer votre commande.");
-} else {
-    products = JSON.parse(fromStorage);
-};
 
 // Récupération de chaque id dans un tableau stocké dans la variable allIds
 
 function collectAllIds(products) {
+   
     let allIds = [];
     products.forEach(function (product) {
         allIds.push(product._id)
@@ -106,24 +120,15 @@ function collectAllIds(products) {
     return allIds
 };
 
-//Envoie à l'Api
-
-// Récupération du formulaire html
-
-let $form = document.querySelector('#form');
-
-const formFields = {
-    $firstName: document.querySelector('#first-name'),
-    $lastName: document.querySelector('#last-name'),
-    $address: document.querySelector('#adress'),
-    $city: document.querySelector('#city'),
-    $email: document.querySelector('#email')
-};
-
 // Fonction qui permet l'envoie du formulaire et les id à l'API
 
 function send(e) {
     e.preventDefault();
+
+    if (total === 0) {
+        alert('votre panier est vide !')
+        return
+    };
 
     // Récupération de l'objet "contact" dans la variable d'objet "order"
     // L'objet "contact" prend en compte la fonction qui vérifie la validité du formulaire 
@@ -141,7 +146,7 @@ function send(e) {
     order.products = collectAllIds(products);
 
     // Envoie des produits à l'api
-    
+
     fetch('http://localhost:3000/api/furniture/order', {
         method: "POST",
         headers: {
@@ -155,13 +160,13 @@ function send(e) {
                 return response.json();
             }
         })
-        .then(function (result) { 
+        .then(function (result) {
             document.location.href = `commande.html?totalPrice=${total}&orderId=${result.orderId}`
         })
         .catch(function (error) {
             alert(error)
         });
-        
+
 };
 
 // Fonction qui permet la validation des données du formulaire 

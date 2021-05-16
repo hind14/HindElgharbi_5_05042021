@@ -1,32 +1,50 @@
-//Chargement de l'URL mofifiée en prenant l'élément 'id' des données du service web (backend)
-
-const urlParam = document.location.search;
-const searchParam = new URLSearchParams(urlParam);
-const id = searchParam.get('id');
-
-//Récupération des données du service web grâce à l'id vers la page produit avec un seul article
-
-fetch('http://localhost:3000/api/furniture/' + id)
-    .then(function (response) {
-        return response.json()
-    })
-    .then(function (data) {
-        createAndDisplayFurniture(data)
-    })
-    .catch(function (error) {
-        alert(error)
-    });
-
 //Récupération d'un élement en HTML puis création d'une div à l'intérieur de celui-ci
 
-const $selectItemBoxInDiv = document.querySelector('.item-box');
+const $itemBox = document.querySelector('.item-box');
 const $furniture = document.createElement('div');
-$selectItemBoxInDiv.appendChild($furniture);
+$itemBox.appendChild($furniture);
 $furniture.classList.add('furniture');
+
+//Création du panier + lien vers la page panier
+
+const $cartBox = document.querySelector('.cart-box');
+const $cart = document.createElement('div');
+$cart.classList.add('cart');
+$cartBox.appendChild($cart);
+
+const $linkToShopCart = document.createElement('a');
+$linkToShopCart.setAttribute('href', 'panier.html');
+const $shopCartIcon = document.querySelector('.shop-cart-icon');
+$cartBox.appendChild($linkToShopCart);
+$linkToShopCart.appendChild($shopCartIcon);
+
+function selectOneProductFromId() {
+    //Chargement de l'URL mofifiée en prenant l'élément 'id' des données du service web (backend)
+
+    const urlParam = document.location.search;
+    const searchParam = new URLSearchParams(urlParam);
+    const id = searchParam.get('id');
+
+    //Récupération des données du service web grâce à l'id vers la page produit avec un seul article
+
+    fetch('http://localhost:3000/api/furniture/' + id)
+        .then(function (response) {
+            return response.json()
+        })
+        .then(function (data) {
+            createAndDisplayFurniture(data)
+        })
+        .catch(function (error) {
+            alert(error)
+        });
+};
+
+selectOneProductFromId();
 
 //Création d'une fonction qui récupère le contenu d'un article et le place dans des paragraphes
 
 function createAndDisplayFurniture(furniture) {
+
     const $image = document.createElement('img');
     $image.src = furniture.imageUrl;
     $furniture.appendChild($image);
@@ -34,7 +52,7 @@ function createAndDisplayFurniture(furniture) {
     $nameParagraph.innerText = 'Produit : ' + furniture.name;
     $furniture.appendChild($nameParagraph);
     const $priceParagraph = document.createElement('p');
-    $priceParagraph.innerText = (furniture.price)/100 + ',00 €';
+    $priceParagraph.innerText = (furniture.price) / 100 + ',00 €';
     $furniture.appendChild($priceParagraph);
     const $descriptionParagraph = document.createElement('p');
     $descriptionParagraph.innerText = 'Description : ' + furniture.description;
@@ -42,14 +60,14 @@ function createAndDisplayFurniture(furniture) {
 
     //Appeller les focntions qui actionnent le bouton qui lorsqu'il est cliqué enclanche les selecteurs de quatité et de vernissage.
 
-    const selectors = createSelector(furniture);
+    const selectors = createSelectors(furniture);
     createAndDisplayButton(furniture, selectors);
 };
 
 /* Création d'un selecteur prenant pour options les données affichées dans le tableau 
 [varnish] issue de l'API, et d'un selecteur de quantité */
 
-function createSelector(furniture) {
+function createSelectors(furniture) {
     const $varnishParagraph = document.createElement('p');
     $varnishParagraph.innerText = 'Vernis : ';
     $furniture.appendChild($varnishParagraph);
@@ -80,19 +98,6 @@ function createSelector(furniture) {
 
     return [$quantitySelect, $varnishSelect];
 };
-
-//Création du panier + lien vers la page panier
-
-const $cartBox = document.querySelector('.cart-box');
-const $cart = document.createElement('div');
-$cart.classList.add('cart');
-$cartBox.appendChild($cart);
-
-const $linkToShopCart = document.createElement('a');
-$linkToShopCart.setAttribute('href', 'panier.html');
-const $shopCartIcon = document.querySelector('.shop-cart-icon');
-$cartBox.appendChild($linkToShopCart);
-$linkToShopCart.appendChild($shopCartIcon);
 
 //Création d'un bouton pour ajouter au panier 
 
@@ -126,7 +131,7 @@ function addingItemIntoCart(furniture, selectors) {
     const furniture_ = {
         _id: furniture._id,
         name: furniture.name,
-        price: parseInt(furniture.price)/100,
+        price: parseInt(furniture.price) / 100,
         quantity: parseInt(selectors[0].value),
         varnish: selectors[1].value
     }
@@ -135,20 +140,24 @@ function addingItemIntoCart(furniture, selectors) {
 
     basket.push(furniture_);
 
-    localStorage.setItem('Orinoco', JSON.stringify(basket));
+    localStorage.setItem('Orinoco', JSON.stringify(basket));   
 };
-
-const basket = JSON.parse(localStorage.getItem('Orinoco'));
-let nbInBasket;
 
 //Actualisation du nombre d'article dans le panier
 
-if (basket) {
-    nbInBasket = basket.length;
-    
-}
-else {
-    nbInBasket = 0;
+function numberInBasket() {
+
+    const basket = JSON.parse(localStorage.getItem('Orinoco'));
+    let nbInBasket;
+
+    if (basket) {
+        nbInBasket = basket.length;
+    }
+    else {
+        nbInBasket = 0;
+    };
+
+    $cart.innerText = nbInBasket;
 };
 
-$cart.innerText = nbInBasket;
+numberInBasket();

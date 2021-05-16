@@ -1,18 +1,33 @@
-// Récupération de l'URL du prix total et du numéro de commande + affichage
+const $thanks = document.querySelector('.thanks');
+$thanks.innerText = 'Merci pour votre achat !';
+
+// Paramètre de récupération d'URL
 
 const urlParam = document.location.search;
 const searchParam = new URLSearchParams(urlParam);
-const totalPrice = searchParam.get('totalPrice');
-const orderId = searchParam.get('orderId');
 
-const $thanks = document.querySelector('.thanks');
-const $totalPrice = document.querySelector('.total-price');
-const $orderId = document.querySelector('.order-id');
+// Récupération de l'URL du prix total et du numéro de commande + affichage
 
-$thanks.innerText = 'Merci pour votre achat !';
-$totalPrice.innerHTML = 'Le montant de votre commande est de ' + totalPrice + ',00 euros.';
-$orderId.innerHTML = 'Votre commande ' + orderId + ' a bien été enregistré !';
+function getURLOrder() {
+    const orderId = searchParam.get('orderId');
+    const $orderId = document.querySelector('.order-id');
+    $orderId.innerHTML = 'Votre commande ' + orderId + ' a bien été enregistré !';
+};
+
+function getURLPrice() {
+    const totalPrice = searchParam.get('totalPrice');
+    const $totalPrice = document.querySelector('.total-price');
+    $totalPrice.innerHTML = 'Le montant de votre commande est de ' + totalPrice + ',00 euros.';
+};
 
 //Suppression des éléments dans le localStorage
 
-window.localStorage.removeItem('Orinoco');
+function removeItems() {
+    window.localStorage.removeItem('Orinoco');
+};
+
+//Appel des fonctions 
+
+getURLOrder();
+getURLPrice();
+removeItems();
