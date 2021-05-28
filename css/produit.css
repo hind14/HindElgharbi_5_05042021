@@ -1,4 +1,3 @@
-
 body {
     margin: 0;
     padding: 0;
@@ -29,6 +28,7 @@ body {
 .shop-cart-icon {
     font-size: 30px; 
     color: black; 
+    cursor: pointer;
 }
 
 .cart {
@@ -55,8 +55,8 @@ body {
 }
 
 .item-box img {
-    height: 300px;
-    width: 400px;
+    height: 250px;
+    width: 300px;
 }
 
 .btn {

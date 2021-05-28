@@ -17,6 +17,10 @@ body {
     padding: 0 10px;
 }
 
+h1 {
+    text-align: center;
+}
+
 .nav-icon {
     font-size: 30px;
 }
@@ -26,8 +30,19 @@ body {
     width: 200px;
 }
 
+.list-of-articles {
+    border: black 2px solid;
+    margin: 10px;
+    padding: 15px;
+}
+
 li {
     color: blueviolet;
+}
+
+li img {
+    width: 30%;
+    height: 30%;
 }
 
 .empty-basket {
@@ -36,7 +51,9 @@ li {
 
 h2,.empty-basket {
     color : red;
+    text-align: center;
 }
+
 
 .link-to-product {
     color : orange;
@@ -46,3 +63,17 @@ h2,.empty-basket {
     color : green;
 }
 
+#form > * {
+    display: flex;
+    margin: 5px 0 5px 20px;
+    padding: 3px;
+    border-radius: 8px;
+    width: 60%; 
+}
+
+#submit {
+    padding: 10px;
+    width: 180px;
+    border-radius: 40px;
+
+}

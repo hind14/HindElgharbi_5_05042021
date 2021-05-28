@@ -6,7 +6,7 @@ const $boxListOfArticles = document.querySelector('.list-of-articles');
 const $linkToProduct = document.createElement('a');
 $linkToProduct.setAttribute('href', '../index.html');
 $linkToProduct.classList.add('link-to-product');
-$linkToProduct.innerText = 'Continuer mes achats';
+$linkToProduct.innerHTML = '<p> Continuer mes achats';
 $boxListOfArticles.appendChild($linkToProduct);
 
 // Déclaration d'une variable du prix total qui vaut zéro
@@ -42,10 +42,10 @@ const order = {
     products: []
 };
 
-
 //Fonction qui récupère les produits du localStorage
 
 function getFromStorage() {
+    
     // Stocker une variable qui récupère le tableau issu de la page produit (du local storage)
 
     let fromStorage = localStorage.getItem('Orinoco');
@@ -60,12 +60,11 @@ function getFromStorage() {
         $emptyBasket.classList.add('empty-basket')
         $emptyBasket.innerHTML = '<h2> Votre panier ne contient aucun article </h2>';
         $section.appendChild($emptyBasket);
-
     } else {
 
         // Panier rempli, on transforme les chaînes de caractère en objet
 
-         products = JSON.parse(fromStorage);
+        products = JSON.parse(fromStorage);
 
         // Appel de la fonction qui affiche le panier avec comme paramètre les objets issues du localstorage
 
@@ -90,12 +89,38 @@ function displayBasket(basket) {
         // Création liste avec la récupération de certains objets
 
         const $list = document.createElement('li');
+        $list.className= 'basket-element';
         $boxListOfArticles.appendChild($list);
-        $list.innerHTML = `<p> ${furniture.name} </p>`;
+
+        $list.innerHTML = `<img src="${furniture.imageUrl}"> </img>`;
+        $list.innerHTML += `<p> ${furniture.name} </p>`;
         $list.innerHTML += `<p> Prix :  ${furniture.price},00 € </p>`;
         $list.innerHTML += `<p> Quantité : ${furniture.quantity}  </p>`;
         $list.innerHTML += `<p> Sous-total : ${subTotal},00 €</p>`;
 
+        //Création bouton poubelle
+
+        const $buttonToDelete = document.createElement('button');
+        $list.appendChild($buttonToDelete);
+        $buttonToDelete.innerHTML =  `<i class="fas fa-trash-alt"></i>`;
+
+        //Supression des produits un à un
+
+        $buttonToDelete.addEventListener ('click', function () {
+
+            // Transformation en tableau de la liste des produits afin de recup l'index du produit selectionné afin d'être supprimer
+            const list = Array.prototype.slice.call(document.querySelectorAll('.basket-element'));
+            const indexToDelete = list.indexOf($list);
+            basket.splice(indexToDelete, 1);
+            localStorage.setItem('Orinoco', JSON.stringify(basket));
+
+            // Modification du total
+
+            total -= subTotal;
+            $total.innerHTML = `<p> Montant total : ${total},00  € </p>`;
+            $boxListOfArticles.removeChild($list);
+        });
+        
         // Total: addition des sous-totaux
 
         total += subTotal;
@@ -105,6 +130,27 @@ function displayBasket(basket) {
     $total.classList.add('total');
     $boxListOfArticles.appendChild($total);
     $total.innerHTML = `<p> Montant total : ${total},00  € </p>`;
+
+    removeAllItemsFromBasket(basket);
+};
+
+// Fonction qui supprime tous les articles du panier
+
+function removeAllItemsFromBasket(allItems) {
+    const $removeAllItems = document.createElement('div');
+    $removeAllItems.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+    $removeAllItems.style.cursor = 'pointer';
+    $boxListOfArticles.appendChild($removeAllItems);
+
+    if (!allItems) {
+        allItems = 0;
+    } else {
+        $removeAllItems.addEventListener('click', function(e) {
+            e.preventDefault;
+            localStorage.removeItem('Orinoco');
+            $boxListOfArticles.innerHTML = '<a href="../index.html" class="link-of-product"> Continuer vos achats  </a> <p> Votre panier a été vidé <p>';
+        }) 
+    };
 };
 
 //Formulaire + envoie des données vers API
@@ -166,7 +212,6 @@ function send(e) {
         .catch(function (error) {
             alert(error)
         });
-
 };
 
 // Fonction qui permet la validation des données du formulaire 

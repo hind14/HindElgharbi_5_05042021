@@ -18,7 +18,7 @@ const $shopCartIcon = document.querySelector('.shop-cart-icon');
 $cartBox.appendChild($linkToShopCart);
 $linkToShopCart.appendChild($shopCartIcon);
 
-function selectOneProductFromId() {
+function fetchProductFromId() {
     //Chargement de l'URL mofifiée en prenant l'élément 'id' des données du service web (backend)
 
     const urlParam = document.location.search;
@@ -39,7 +39,7 @@ function selectOneProductFromId() {
         });
 };
 
-selectOneProductFromId();
+fetchProductFromId();
 
 //Création d'une fonction qui récupère le contenu d'un article et le place dans des paragraphes
 
@@ -58,7 +58,7 @@ function createAndDisplayFurniture(furniture) {
     $descriptionParagraph.innerText = 'Description : ' + furniture.description;
     $furniture.appendChild($descriptionParagraph);
 
-    //Appeller les focntions qui actionnent le bouton qui lorsqu'il est cliqué enclanche les selecteurs de quatité et de vernissage.
+    //Appeller les fonctions qui actionnent le bouton qui lorsqu'il est cliqué enclanche les selecteurs de quatité et de vernissage.
 
     const selectors = createSelectors(furniture);
     createAndDisplayButton(furniture, selectors);
@@ -110,8 +110,10 @@ function createAndDisplayButton(furniture, selectors) {
 
     //En appuyant sur le bouton, la fonction liée au localStorage est appellée et ajoute les articles dans ce dernier (nb + varnish)
 
-    $button.addEventListener('click', function () {
+    $button.addEventListener('click', function(e) {
+        e.preventDefault;
         addingItemIntoCart(furniture, selectors);
+        numberInBasket();
     });
 };
 
@@ -126,9 +128,10 @@ function addingItemIntoCart(furniture, selectors) {
         basket = [];
     }
 
-    //Stockage d'une variable avec les objets qui vont  s'envoyer au panier
+    //Stockage d'une variable avec les objets qui vont s'envoyer au panier
 
     const furniture_ = {
+        imageUrl: furniture.imageUrl,
         _id: furniture._id,
         name: furniture.name,
         price: parseInt(furniture.price) / 100,

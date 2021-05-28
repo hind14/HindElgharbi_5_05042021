@@ -47,12 +47,10 @@ function createAndDisplayFurniture(furniture) {
     $image.src = furniture.imageUrl;
     $linkToFurniture.appendChild($image);
     const $nameParagraph = document.createElement('p');
-    $nameParagraph.innerText = 'Produit : ' + furniture.name;
+    $nameParagraph.innerText = furniture.name;
     $linkToFurniture.appendChild($nameParagraph);
     const $priceParagraph = document.createElement('p');
     $priceParagraph.innerText = (furniture.price) / 100 + ',00 €';
-    const $descriptionParagraph = document.createElement('p');
-    $descriptionParagraph.innerText = 'Description : ' + furniture.description;
     $linkToFurniture.appendChild($priceParagraph);
 
     numberInBasket()
