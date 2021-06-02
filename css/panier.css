@@ -7,6 +7,7 @@ body {
 
 * {
     list-style-type: none;
+    text-decoration: none;
 }
 
 .navbar-header {
@@ -17,12 +18,12 @@ body {
     padding: 0 10px;
 }
 
-h1 {
-    text-align: center;
+.navbar-header > ul {
+    padding: 0;
 }
 
-.nav-icon {
-    font-size: 30px;
+h1 {
+    text-align: center;
 }
 
 .navbar-header img {
@@ -36,13 +37,35 @@ h1 {
     padding: 15px;
 }
 
-li {
-    color: blueviolet;
+.link-to-product> button {
+    text-align: center;
+    border-radius: 40px;
+    cursor: pointer;
+    padding: 10px;
 }
 
 li img {
-    width: 30%;
-    height: 30%;
+    width: 50%;
+    height: 50%;
+}
+
+li {
+    margin: 30px;
+}
+
+.basket-element {
+    position: relative;
+    width: 300px;
+}
+
+.basket-element> p {
+    margin: 0;
+}
+
+.delete-button-for-each {
+    position: absolute;
+    top: 60px;
+    right: 55px;
 }
 
 .empty-basket {
@@ -50,30 +73,43 @@ li img {
 }
 
 h2,.empty-basket {
-    color : red;
     text-align: center;
 }
 
-
-.link-to-product {
-    color : orange;
+.total {
+    font-weight: bold;
 }
 
-.total {
-    color : green;
+.trash-all {
+    cursor: pointer;
+    margin: 20px;
 }
 
 #form > * {
     display: flex;
     margin: 5px 0 5px 20px;
     padding: 3px;
-    border-radius: 8px;
-    width: 60%; 
+    border-radius: 40px;
+    width: 50%; 
 }
 
 #submit {
     padding: 10px;
     width: 180px;
     border-radius: 40px;
+}
 
+@media  all and (min-width: 500px) {
+    li img {
+        width: 40%;
+        height: 40%;
+    }
+
+    #form > * {
+        width : 250px
+    }
+
+    #submit {
+        width: 180px;
+    }
 }

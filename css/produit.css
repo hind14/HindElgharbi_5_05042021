@@ -6,6 +6,7 @@ body {
 
 * {
     list-style-type: none;
+    text-decoration: none;
 }
 
 .navbar-header {
@@ -14,10 +15,6 @@ body {
     justify-content: space-between; 
     background-color: #F3E9F1;
     padding: 0 10px;
-}
-
-.nav-icon {
-    font-size: 30px;
 }
 
 .cart-box {

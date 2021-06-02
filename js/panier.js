@@ -1,14 +1,6 @@
 const $section = document.querySelector('.section-1');
 const $boxListOfArticles = document.querySelector('.list-of-articles');
 
-// Lien vers produits / continuer les achats
-
-const $linkToProduct = document.createElement('a');
-$linkToProduct.setAttribute('href', '../index.html');
-$linkToProduct.classList.add('link-to-product');
-$linkToProduct.innerHTML = '<p> Continuer mes achats';
-$boxListOfArticles.appendChild($linkToProduct);
-
 // Déclaration d'une variable du prix total qui vaut zéro
 
 let total = 0;
@@ -89,7 +81,7 @@ function displayBasket(basket) {
         // Création liste avec la récupération de certains objets
 
         const $list = document.createElement('li');
-        $list.className= 'basket-element';
+        $list.className = 'basket-element';
         $boxListOfArticles.appendChild($list);
 
         $list.innerHTML = `<img src="${furniture.imageUrl}"> </img>`;
@@ -103,6 +95,7 @@ function displayBasket(basket) {
         const $buttonToDelete = document.createElement('button');
         $list.appendChild($buttonToDelete);
         $buttonToDelete.innerHTML =  `<i class="fas fa-trash-alt"></i>`;
+        $buttonToDelete.className = 'delete-button-for-each';
 
         //Supression des produits un à un
 
@@ -138,8 +131,8 @@ function displayBasket(basket) {
 
 function removeAllItemsFromBasket(allItems) {
     const $removeAllItems = document.createElement('div');
-    $removeAllItems.innerHTML = `<i class="fas fa-trash-alt"></i>`;
-    $removeAllItems.style.cursor = 'pointer';
+    $removeAllItems.innerHTML = `<div> Vider tout le panier <i class="fas fa-trash-alt"></i> </div>`;
+    $removeAllItems.className = 'trash-all';
     $boxListOfArticles.appendChild($removeAllItems);
 
     if (!allItems) {
@@ -152,6 +145,14 @@ function removeAllItemsFromBasket(allItems) {
         }) 
     };
 };
+
+// Lien vers produits / continuer les achats
+
+const $linkToProduct = document.createElement('a');
+$linkToProduct.setAttribute('href', '../index.html');
+$linkToProduct.classList.add('link-to-product');
+$linkToProduct.innerHTML = '<button type="button"> Continuer mes achats </button>';
+$boxListOfArticles.appendChild($linkToProduct);
 
 //Formulaire + envoie des données vers API
 
